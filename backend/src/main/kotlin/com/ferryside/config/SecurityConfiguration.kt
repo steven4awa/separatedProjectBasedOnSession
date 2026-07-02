@@ -1,5 +1,6 @@
 package com.ferryside.config
 
+import com.ferryside.handler.LoginFailureHandler
 import com.ferryside.handler.LoginSuccessHandler
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -18,17 +19,22 @@ import org.springframework.security.web.SecurityFilterChain
 class SecurityConfiguration {
 
     @Bean
-    fun securityFilterChain(http: HttpSecurity, successHandler: LoginSuccessHandler): SecurityFilterChain {
+    fun securityFilterChain(http: HttpSecurity, successHandler: LoginSuccessHandler, failureHandler: LoginFailureHandler): SecurityFilterChain {
         http {
             authorizeHttpRequests { // 配置哪些请求需要登录，哪些不用登录。
-                authorize(anyRequest, authenticated)
+                // 1. 优先配置：允许所有人访问登录接口
+                authorize("/api/auth/login", permitAll) // `/api/auth/login` is accessible for everyone
+                authorize(anyRequest, authenticated) // 除了 `/api/auth/login` 都需要认证
             }
 
             formLogin {
-                loginProcessingUrl = "/api/auth/login"
+                loginProcessingUrl = "/api/auth/login" // 更改默认登录接口 只负责处理登录请求
                 authenticationSuccessHandler = successHandler
-            }
+                authenticationFailureHandler = failureHandler
 
+//                permitAll()
+            }
+            httpBasic { }
 
             logout {
                 logoutUrl = "/api/auth/logout"
