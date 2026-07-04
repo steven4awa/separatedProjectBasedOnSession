@@ -5,6 +5,28 @@
   margin: 0 auto;
   padding: 2rem;
   font-weight: normal;
+  /* 1. 确保 #app 拥有定位上下文 */
+  position: relative;
+    /* 2. 确保内容能够显示在遮罩层上方 */
+    z-index: 1;
+}
+
+/* 3. 添加灰色遮罩层 */
+#app::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+    background-color:  var(--color-background-transparent);
+
+    /* 确保遮罩在 #app 背景之上，但在文字内容之下 */
+    z-index: -1;
+
+    /* 可选：如果你的 #app 有圆角，遮罩也要加上 */
+     border-radius: 8px;
 }
 
 a,
@@ -21,15 +43,33 @@ a,
   }
 }
 
-@media (min-width: 1024px) {
-  body {
-    display: flex;
-    place-items: center;
-  }
+body {
+  display: flex;
+  place-items: center;
+}
 
+@media (min-width: 1024px) { /* 当屏幕或浏览器窗口的宽度大于或等于 1024 像素时，大括号内部的 CSS 样式才会生效。 */
   #app {
     display: grid;
     grid-template-columns: 1fr 1fr;
     padding: 0 2rem;
   }
+}
+
+/*body{*/
+/*    background-image: url("LoginBackground.jpg");*/
+/*    background-repeat: no-repeat;*/
+/*    background-size: cover;*/
+/*    */
+/*}*/
+
+:root::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background-image: url("LoginBackground.jpg");
+    background-size: cover;
+    background-position: center;
+    filter: blur(2px);
+    transform: scale(1.05); /* 防止模糊后四周露白 */
 }

@@ -36,3 +36,21 @@ npm run dev
 ```sh
 npm run build
 ```
+# Background Image Issue
+
+The issue occurs because the pseudo-element is attached to :root (the <html> tag) using position: absolute. When the viewport is scaled down extremely small (e.g., below 200px), any content overflow or layout wrapping can cause the calculated height of :root to change. Combined with an ultra-high-resolution image (5640x2460), the browser struggles to scale it properly, resulting in white gaps.
+
+By changing position: absolute to position: fixed, the pseudo-element will always anchor itself to the viewport (the screen) instead of the document root, no matter how much you zoom or resize.
+
+```css
+:root::before {
+    content: "";
+    position: fixed; /* replace absolute with fixed */
+    inset: 0;
+    background-image: url("LoginBackground.jpg");
+    background-size: cover;
+    background-position: center;
+    filter: blur(2px);
+    transform: scale(1.05); /* 防止模糊后四周露白 */
+}
+```
