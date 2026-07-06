@@ -1,6 +1,7 @@
 <template>
   <div class="about">
-    <h1>This is an about page</h1>
+    <h1>You've logged in</h1>
+    <el-button type="warning" @click="logout()">Logout</el-button>
   </div>
 </template>
 
@@ -13,3 +14,10 @@
   }
 }
 </style>
+
+<script setup>
+import router from '@/router'
+function logout(){
+  router.push('/')
+}
+</script>

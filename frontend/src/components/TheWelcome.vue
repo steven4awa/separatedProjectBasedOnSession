@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import WelcomeItem from './WelcomeItem.vue'
 import DocumentationIcon from './icons/IconDocumentation.vue'
 import ToolingIcon from './icons/IconTooling.vue'
@@ -7,7 +7,32 @@ import CommunityIcon from './icons/IconCommunity.vue'
 import SupportIcon from './icons/IconSupport.vue'
 import {House} from '@element-plus/icons-vue'
 import {Clock} from '@element-plus/icons-vue'
+import {post, get} from '@/net/index'
+import {reactive} from "vue";
+import {ElMessage} from "element-plus";
+import router from '@/router'
 const openReadmeInEditor = () => fetch('/__open-in-editor?file=README.md')
+const form = reactive({
+  username: '',
+  password: '',
+  remember: false,
+})
+
+const login = () =>{
+  if(form.username && form.username.length > 0){
+    post('/api/auth/login', {
+      username: form.username,
+      password: form.password,
+      remember: form.remember,
+    }, (message)=>{
+      ElMessage.success(message)
+      router.push('/index')
+    })
+  } else{
+    ElMessage.warning("Please enter username and password")
+  }
+}
+
 </script>
 
 <template>
@@ -19,23 +44,23 @@ const openReadmeInEditor = () => fetch('/__open-in-editor?file=README.md')
       </h3>
     </div>
 
-    <el-input type="text" placeholder="username/email" style="width: 50%;margin: 30px auto 0;" >
+    <el-input type="text" placeholder="username/email" style="width: 50%;margin: 30px auto 0;" v-model="form.username">
       <template #prefix>
         <el-icon><House /></el-icon>
       </template>
     </el-input>
-    <el-input type="password" placeholder="password" style="width: 50%;margin: 30px auto 0;" >
+    <el-input type="password" placeholder="password" style="width: 50%;margin: 30px auto 0;" v-model="form.password">
       <template #prefix>
         <el-icon><Clock /></el-icon>
       </template>
     </el-input>
 
     <div style="display: flex; justify-content: space-between; ">
-          <el-checkbox size="large" label="remember me"></el-checkbox>
+          <el-checkbox size="large" label="remember me" v-model="form.remember"></el-checkbox>
           <el-link >Forgot the password?</el-link>
     </div>
 
-    <el-button style="width: 270px;margin: 30px auto 0;" type="success" plain>Login</el-button>
+    <el-button style="width: 270px;margin: 30px auto 0;" type="success" plain @click="login()">Login</el-button>
     <el-divider><span>Doesn't have a account yet?</span></el-divider>
     <el-button style="width: 270px;margin: 30px auto 0;" type="warning" plain>Register</el-button>
   </div>
