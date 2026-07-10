@@ -33,20 +33,17 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20 # 可以根据你的本地 Node 版本进行调整
+          node-version: 20
           cache: 'npm'
-          # 如果你使用的是 pnpm 或 yarn，可以取消注释下面对应的行
-          # cache: 'pnpm'
-          # cache: 'yarn'
 
       - name: Install dependencies
-        # 使用 working-directory 指定前端目录
-        working-directory: separatedProjectBasedOnSession/frontend
+        # 使用全局绝对路径变量，精准定位到前端目录
+        working-directory: ${{ github.workspace }}/frontend
         run: npm install
 
       - name: Build project
-        # 使用 working-directory 指定前端目录
-        working-directory: separatedProjectBasedOnSession/frontend
+        # 使用全局绝对路径变量
+        working-directory: ${{ github.workspace }}/frontend
         run: npm run build
 
       - name: Setup Pages
@@ -55,9 +52,8 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # 指定打包后生成的静态文件路径
-          # 通常 Vue 打包后在 dist 目录，注意带上你的前端相对路径
-          path: 'separatedProjectBasedOnSession/frontend/dist'
+          # 同样使用绝对路径指定打包产物
+          path: '${{ github.workspace }}/frontend/dist'
 
       - name: Deploy to GitHub Pages
         id: deployment
