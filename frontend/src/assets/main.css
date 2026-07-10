@@ -1,4 +1,5 @@
 @import './base.css';
+@import 'animate.css';
 
 #app {
   max-width: 1280px;
@@ -8,7 +9,7 @@
   /* 1. 确保 #app 拥有定位上下文 */
   position: relative;
     /* 2. 确保内容能够显示在遮罩层上方 */
-    z-index: 1;
+  z-index: 1;
 }
 
 /* 3. 添加灰色遮罩层 */

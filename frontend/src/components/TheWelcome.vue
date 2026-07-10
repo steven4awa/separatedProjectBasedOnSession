@@ -62,7 +62,7 @@ const login = () =>{
 
     <el-button style="width: 270px;margin: 30px auto 0;" type="success" plain @click="login()">Login</el-button>
     <el-divider><span>Doesn't have a account yet?</span></el-divider>
-    <el-button style="width: 270px;margin: 30px auto 0;" type="warning" plain>Register</el-button>
+    <el-button style="width: 270px;margin: 30px auto 0;" type="warning" plain @click="router.push('/register')">Register</el-button>
   </div>
 
 <!--  <WelcomeItem>-->

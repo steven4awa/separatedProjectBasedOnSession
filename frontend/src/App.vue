@@ -1,21 +1,31 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
 import HelloWorld from './components/HelloWorld.vue'
+import router from "@/router/index.js";
 </script>
 
 <template>
 
     <header>
       <div class="wrapper">
-        <HelloWorld msg="This is Login Page" />
+        <HelloWorld msg="This is Main Page" />
         <nav>
-          <RouterLink to="/">Home</RouterLink>
-          <RouterLink to="/index">About</RouterLink>
+          <RouterLink to="/">Login Page</RouterLink>
+          <RouterLink to="/index">Index</RouterLink>
         </nav>
       </div>
     </header>
 
-    <RouterView />
+  <RouterView v-slot="{ Component }">
+    <Transition
+        enter-active-class="animate__animated animate__fadeIn animate__faster "
+        leave-active-class="animate__animated animate__fadeOut animate__faster "
+        mode="out-in"
+    >
+      <component :is="Component" />
+    </Transition>
+  </RouterView>
+
 
 </template>
 
