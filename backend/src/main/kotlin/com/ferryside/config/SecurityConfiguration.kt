@@ -32,6 +32,7 @@ class SecurityConfiguration(
             authorizeHttpRequests { // 配置哪些请求需要登录，哪些不用登录。
                 // 1. 优先配置：允许所有人访问登录接口
                 authorize("/api/auth/login", permitAll) // `/api/auth/login` is accessible for everyone
+                authorize("/api/auth/**", permitAll)
                 authorize(anyRequest, authenticated) // 除了 `/api/auth/login` 都需要认证
             }
 
@@ -46,6 +47,7 @@ class SecurityConfiguration(
 
             rememberMe {
                 rememberMeParameter = "remember"
+                rememberMeCookieName = "my_custom_remember_me_cookie"
                 tokenRepository = persistentLoginService
             }
 

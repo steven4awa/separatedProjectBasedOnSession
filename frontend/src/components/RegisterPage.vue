@@ -3,6 +3,7 @@
 import router from "@/router/index.js";
 import {Clock, House} from "@element-plus/icons-vue";
 import {reactive, ref} from "vue";
+import {ElMessage} from "element-plus";
 
 const form = reactive({
   userName: "",
@@ -11,7 +12,7 @@ const form = reactive({
   email: '',
   code: ""
 })
-
+const formRef = ref()
 const isEmailValid = ref(false)
 
 const onValidate = (prop, isValid)=>{
@@ -59,7 +60,8 @@ const rules = reactive({
       min: 6,
       max: 16,
       message: 'the length of passwords must be between 6 and 16 characters',
-      trigger: ['blur', 'change']
+      trigger: ['blur', 'change'],
+      required: true,
     }
   ],
   password_confirmation: [
@@ -73,9 +75,24 @@ const rules = reactive({
       type: 'email',
       message: 'Please input correct email address',
       trigger: ['blur', 'change'],
+      required: true,
     },
+  ],
+  code: [
+    {
+      required: true, message: 'Please input your verification code', trigger: ['blur']
+    }
   ]
 })
+
+const registerForm = ()=>{
+  formRef.value.validate((valid)=>{
+    if(valid){
+
+    } else
+      ElMessage.error('Please fill in all fields');
+  })
+}
 </script>
 
 <template>
@@ -86,7 +103,7 @@ const rules = reactive({
         Register a account via this page
       </h3>
     </div>
-    <el-form :rules="rules" :model="form" @validate="onValidate">
+    <el-form :rules="rules" :model="form" @validate="onValidate" ref="formRef">
       <!--  `prop` 告诉 Element我是负责 form.userName 这个字段的    -->
       <el-form-item prop="userName" style="width: 70%;margin: 20px auto 0;">
         <el-input type="text" placeholder="Username" v-model="form.userName">
@@ -116,21 +133,21 @@ const rules = reactive({
           </template>
         </el-input>
       </el-form-item>
-      <el-form-item style="margin: 20px auto 0">
-        <div style="width: 70%;margin: 0 auto 0; display: flex; gap: 3px">
-          <el-input placeholder="Enter your verification code" type="email" v-model="form.code" style="width: 70%">
-            <template #prefix>
-              <el-icon><Clock /></el-icon>
-            </template>
-          </el-input>
-          <el-button style="padding: 5px" class="verify-btn" type="success" :disabled="!isEmailValid">Get the verification code</el-button>
-        </div>
+      <el-form-item style="margin: 20px auto 0;width: 70%;" prop="code">
+          <div style="display: flex; gap: 3px">
+            <el-input placeholder="Enter your verification code" type="email" v-model="form.code" style="width: 70%">
+              <template #prefix>
+                <el-icon><Clock /></el-icon>
+              </template>
+            </el-input>
+            <el-button style="padding: 5px" class="verify-btn" type="success" :disabled="!isEmailValid">Get the verification code</el-button>
+          </div>
       </el-form-item>
     </el-form>
 
 
 
-    <el-button style="width: 270px;margin: 10px auto 10px;" type="warning" plain >Register</el-button>
+    <el-button style="width: 270px;margin: 20px auto 10px;" type="warning" plain @click="registerForm">Register</el-button>
 
     <el-divider ><span>have a account already?</span><a @click="router.push('/')">To login page</a></el-divider>
 

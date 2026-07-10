@@ -11,11 +11,13 @@ export default defineConfig({
     vueDevTools({
         launchEditor: 'idea',
     }),
-
   ],
+
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
+
+  base: '/separatedProjectBasedOnSession/',
 })
