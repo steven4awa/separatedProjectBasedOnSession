@@ -41,12 +41,12 @@ jobs:
 
       - name: Install dependencies
         # 使用 working-directory 指定前端目录
-        working-directory: separatedProjectBasedOnSession/fontend
+        working-directory: separatedProjectBasedOnSession/frontend
         run: npm install
 
       - name: Build project
         # 使用 working-directory 指定前端目录
-        working-directory: separatedProjectBasedOnSession/fontend
+        working-directory: separatedProjectBasedOnSession/frontend
         run: npm run build
 
       - name: Setup Pages
@@ -57,7 +57,7 @@ jobs:
         with:
           # 指定打包后生成的静态文件路径
           # 通常 Vue 打包后在 dist 目录，注意带上你的前端相对路径
-          path: 'separatedProjectBasedOnSession/fontend/dist'
+          path: 'separatedProjectBasedOnSession/frontend/dist'
 
       - name: Deploy to GitHub Pages
         id: deployment
