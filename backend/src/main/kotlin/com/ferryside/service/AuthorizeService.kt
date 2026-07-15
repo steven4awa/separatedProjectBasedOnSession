@@ -1,5 +1,6 @@
 package com.ferryside.service
 
+import jakarta.servlet.http.HttpSession
 import org.springframework.security.core.userdetails.UserDetailsService
 
 /**
@@ -8,5 +9,5 @@ import org.springframework.security.core.userdetails.UserDetailsService
  */
 
 interface AuthorizeService : UserDetailsService{
-    fun sendValidatedEmail(email: String): Boolean
+    fun sendValidatedEmail(email: String, session: HttpSession): Boolean
 }

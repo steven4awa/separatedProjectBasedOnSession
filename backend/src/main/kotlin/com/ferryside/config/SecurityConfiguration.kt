@@ -1,7 +1,9 @@
 package com.ferryside.config
 
+import com.ferryside.handler.ForbiddenHandler
 import com.ferryside.handler.LoginFailureHandler
 import com.ferryside.handler.LoginSuccessHandler
+import com.ferryside.handler.UnauthorizedHandler
 import com.ferryside.service.PersistentLoginService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -23,15 +25,22 @@ import javax.sql.DataSource
 @Configuration
 @EnableWebSecurity
 class SecurityConfiguration(
-    private val persistentLoginService: PersistentLoginService
+    private val persistentLoginService: PersistentLoginService,
+    private val unauthorizedHandler: UnauthorizedHandler,
+    private val forbiddenHandler: ForbiddenHandler,
 ) {
 
     @Bean
-    fun securityFilterChain(http: HttpSecurity, successHandler: LoginSuccessHandler, failureHandler: LoginFailureHandler, corsSource: CorsConfigurationSource): SecurityFilterChain {
+    fun securityFilterChain(
+        http: HttpSecurity,
+        successHandler: LoginSuccessHandler,
+        failureHandler: LoginFailureHandler,
+        corsSource: CorsConfigurationSource
+    ): SecurityFilterChain {
         http {
             authorizeHttpRequests { // 配置哪些请求需要登录，哪些不用登录。
                 // 1. 优先配置：允许所有人访问登录接口
-                authorize("/api/auth/login", permitAll) // `/api/auth/login` is accessible for everyone
+//                authorize("/api/auth/login", permitAll) // `/api/auth/login` is accessible for everyone
                 authorize("/api/auth/**", permitAll)
                 authorize(anyRequest, authenticated) // 除了 `/api/auth/login` 都需要认证
             }
@@ -61,6 +70,11 @@ class SecurityConfiguration(
 
             cors {
                 configurationSource = corsSource
+            }
+
+            exceptionHandling {
+                authenticationEntryPoint = unauthorizedHandler
+                accessDeniedHandler = forbiddenHandler
             }
         }
         return http.build()

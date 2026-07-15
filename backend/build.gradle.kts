@@ -38,7 +38,8 @@ dependencies {
     implementation("com.google.code.gson:gson:2.13.1")
     implementation("com.baomidou:mybatis-plus-spring-boot4-starter:3.5.13")
     implementation("org.springframework.boot:spring-boot-starter-validation")
-
+    implementation("org.springframework.boot:spring-boot-starter-mail")
+    implementation("org.springframework.boot:spring-boot-starter-data-redis")
 }
 
 kotlin {

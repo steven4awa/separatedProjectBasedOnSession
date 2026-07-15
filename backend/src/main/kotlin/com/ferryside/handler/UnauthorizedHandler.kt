@@ -5,22 +5,23 @@ import com.ferryside.util.JsonUtil
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.security.core.AuthenticationException
-import org.springframework.security.web.authentication.AuthenticationFailureHandler
+import org.springframework.security.web.AuthenticationEntryPoint
 import org.springframework.stereotype.Component
 
 /**
 @ Author: ferry
-@ Date 30/06/2026 18:47
+@ Date 15/07/2026
  */
 @Component
-class LoginFailureHandler : AuthenticationFailureHandler {
-    override fun onAuthenticationFailure(request: HttpServletRequest,
-                                         response: HttpServletResponse,
-                                         exception: AuthenticationException
+class UnauthorizedHandler : AuthenticationEntryPoint {
+    override fun commence(
+        request: HttpServletRequest,
+        response: HttpServletResponse,
+        authException: AuthenticationException
     ) {
         response.contentType = "application/json"
         response.characterEncoding = Charsets.UTF_8.name()
         response.status = HttpServletResponse.SC_UNAUTHORIZED
-        response.writer.write(JsonUtil.toJson(RestBean.failure(401, exception.message)))
+        response.writer.write(JsonUtil.toJson(RestBean.failure(401, "Not logged in. Please log in first.")))
     }
 }

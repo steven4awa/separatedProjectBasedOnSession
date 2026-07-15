@@ -25,7 +25,9 @@ class LoginSuccessHandler : AuthenticationSuccessHandler {
                                          response: HttpServletResponse,
                                          authentication: Authentication
     ) {
+        response.contentType = "application/json"
         response.characterEncoding = Charsets.UTF_8.name()
+        response.status = HttpServletResponse.SC_OK
         response.writer.write(JsonUtil.toJson(RestBean.success("login success")))
     }
 }

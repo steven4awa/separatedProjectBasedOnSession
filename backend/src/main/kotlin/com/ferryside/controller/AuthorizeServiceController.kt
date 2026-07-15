@@ -3,6 +3,7 @@ package com.ferryside.controller
 import com.ferryside.entity.RestBean
 import com.ferryside.service.AuthorizeService
 import com.ferryside.util.LogFactory
+import jakarta.servlet.http.HttpSession
 import lombok.extern.java.Log
 import org.intellij.lang.annotations.Pattern
 import org.springframework.http.HttpStatus
@@ -29,9 +30,11 @@ class AuthorizeServiceController (
     private val log = LogFactory.logger<AuthorizeServiceController>()
 
     @PostMapping("/valid-email")
-    fun validateEmail(@Pattern(EMAIL_REGEX)@RequestParam("email") email: String): RestBean<String>{ // @RequestParam 获取请求参数
+    fun validateEmail(@Pattern(EMAIL_REGEX)@RequestParam("email") email: String
+        , session: HttpSession
+    ): RestBean<String>{ // @RequestParam 获取请求参数
         log.info("Validating email: $email")
-        return if (service.sendValidatedEmail(email))
+        return if (service.sendValidatedEmail(email, session))
             RestBean.success("sent email successfully")
         else
             RestBean.failure(HttpStatus.BAD_REQUEST.ordinal, "Invalid email")

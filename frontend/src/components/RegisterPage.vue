@@ -4,6 +4,7 @@ import router from "@/router/index.js";
 import {Clock, House} from "@element-plus/icons-vue";
 import {reactive, ref} from "vue";
 import {ElMessage} from "element-plus";
+import {post} from "@/net/index.ts";
 
 const form = reactive({
   userName: "",
@@ -93,6 +94,13 @@ const registerForm = ()=>{
       ElMessage.error('Please fill in all fields');
   })
 }
+const sendValidatedEmail = () =>{
+  post('api/auth/valid-email',{
+    email: form.email
+  }, (message) =>{
+    ElMessage.success(message)
+  })
+}
 </script>
 
 <template>
@@ -140,7 +148,7 @@ const registerForm = ()=>{
                 <el-icon><Clock /></el-icon>
               </template>
             </el-input>
-            <el-button style="padding: 5px" class="verify-btn" type="success" :disabled="!isEmailValid">Get the verification code</el-button>
+            <el-button style="padding: 5px" class="verify-btn" type="success" :disabled="!isEmailValid" @click="sendValidatedEmail()">Get the verification code</el-button>
           </div>
       </el-form-item>
     </el-form>
