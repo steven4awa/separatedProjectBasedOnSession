@@ -1,5 +1,7 @@
 package com.ferryside.entity
 
+import com.baomidou.mybatisplus.annotation.IdType
+import com.baomidou.mybatisplus.annotation.TableId
 import com.baomidou.mybatisplus.annotation.TableName
 
 /**
@@ -8,6 +10,7 @@ import com.baomidou.mybatisplus.annotation.TableName
  */
 @TableName("users")
 data class Users(
+    @TableId(type = IdType.AUTO)
     var id: Long? = null,
     var username: String,
     var password: String? = null,

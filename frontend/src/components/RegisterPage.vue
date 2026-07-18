@@ -89,18 +89,39 @@ const rules = reactive({
 const registerForm = ()=>{
   formRef.value.validate((valid)=>{
     if(valid){
-
+      post("/api/auth/register",{
+        username: form.userName,
+        password: form.password,
+        email: form.email,
+        code: form.code,
+      }, ()=>{
+        router.push("/");
+      })
     } else
       ElMessage.error('Please fill in all fields');
   })
 }
+
+const countdown = ref(0)       // 倒计时秒数
+let timer = null
+
 const sendValidatedEmail = () =>{
-  post('api/auth/valid-email',{
+  post('/api/auth/valid-email',{
     email: form.email
   }, (message) =>{
+    countdown.value = 60
     ElMessage.success(message)
+    timer = setInterval(() => {
+      countdown.value--
+      if (countdown.value <= 0) {
+        clearInterval(timer)
+      }
+    }, 1000)
+  }, (message)=>{
+    ElMessage.error(message)
   })
 }
+
 </script>
 
 <template>
@@ -148,7 +169,9 @@ const sendValidatedEmail = () =>{
                 <el-icon><Clock /></el-icon>
               </template>
             </el-input>
-            <el-button style="padding: 5px" class="verify-btn" type="success" :disabled="!isEmailValid" @click="sendValidatedEmail()">Get the verification code</el-button>
+            <el-button style="padding: 5px" class="verify-btn" type="success" :disabled="!isEmailValid" @click="sendValidatedEmail()">
+              {{ countdown > 0 ? `Resend in ${countdown}s` : 'Get the verification code' }}
+            </el-button>
           </div>
       </el-form-item>
     </el-form>

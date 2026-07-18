@@ -1,5 +1,8 @@
 package com.ferryside.service.impl
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl
+import com.ferryside.entity.Users
+import com.ferryside.mapper.UsersMapper
 import com.ferryside.service.AuthorizeService
 import com.ferryside.service.UserService
 import jakarta.servlet.http.HttpSession
@@ -25,8 +28,9 @@ class AuthorizeServiceImpl(
     private val mailSender: MailSender,
     @Value($$"${spring.mail.username}")
     private val sendMail: String,
-    private val template: StringRedisTemplate
-) : AuthorizeService {
+    private val template: StringRedisTemplate,
+    private val session: HttpSession,
+) : AuthorizeService, ServiceImpl<UsersMapper, Users>() {
 
     override fun loadUserByUsername(username: String): UserDetails {
         val user = userService.findAccountByUsernameOrEmail(username)
@@ -39,7 +43,39 @@ class AuthorizeServiceImpl(
         )
     }
 
-    override fun sendValidatedEmail(email: String, session: HttpSession): Boolean {
+
+    override fun validateAndRegister(
+        username: String,
+        password: String,
+        email: String,
+        code: String
+    ): String {
+        val msg = validateKeyInRedis(email, code)
+        if(msg == "开始注册"){
+            save(Users(username = username, password = password, email = email))
+            return msg
+        }
+        return msg
+    }
+
+fun validateKeyInRedis(email: String, code: String): String {
+        val key = "email: ${session.id}: $email"
+        if(template.hasKey(key)){
+            val codeValue = template.opsForValue().get(key) as String
+            if(codeValue == ""){
+                return "验证码失效"
+            }
+            return if(codeValue == code){
+                "开始注册"
+            } else{
+                "验证码错误"
+            }
+
+        } else
+        return "请先发送验证码到邮箱"
+    }
+
+    override fun sendValidatedEmail(email: String): String {
         /**
          * 1. 生成验证码
          * 2. 把邮箱和对应的验证码存入 Redis（过期时间3分钟）
@@ -51,7 +87,10 @@ class AuthorizeServiceImpl(
         if(template.hasKey(key)){
             val expire = template.getExpire(key, TimeUnit.SECONDS)
             if(expire > 120)
-                return false
+                return "false"
+        }
+        if(userService.findAccountByUsernameOrEmail(email) != null){
+            return "该邮箱已被注册"
         }
 
         val randomCode = Random.nextInt(100000,1000000)
@@ -61,9 +100,16 @@ class AuthorizeServiceImpl(
             subject = "Verification Code"
             text = "Your varication code is $randomCode"
         }
-
+        //  Operations for value
         template.opsForValue().set(key, randomCode.toString(), Duration.ofMinutes(3))
-        mailSender.send(message)
-        return true
+        try{
+            mailSender.send(message)
+        } catch (e: Exception){
+            template.delete(key)
+            e.printStackTrace()
+            return "false"
+        }
+
+        return "true"
     }
 }

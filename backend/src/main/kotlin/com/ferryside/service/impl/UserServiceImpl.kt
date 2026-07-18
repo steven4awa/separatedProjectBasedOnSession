@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service
 @Service
 class UserServiceImpl : UserService, ServiceImpl<UsersMapper, Users>(){
     override fun findAccountByUsernameOrEmail(usernameOrEmail: String): Users? {
-        return   query()
+        return query()
             .eq("username", usernameOrEmail)
             .or()
             .eq("email", usernameOrEmail)

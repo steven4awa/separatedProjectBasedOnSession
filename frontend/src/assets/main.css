@@ -2,14 +2,15 @@
 @import 'animate.css';
 
 #app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  font-weight: normal;
-  /* 1. 确保 #app 拥有定位上下文 */
-  position: relative;
+    max-width: 1280px;
+    margin: auto auto;
+    padding: 2rem;
+    font-weight: normal;
+    /* 1. 确保 #app 拥有定位上下文 */
+    position: relative;
     /* 2. 确保内容能够显示在遮罩层上方 */
-  z-index: 1;
+    z-index: 1;
+    border: 1px solid var(--vt-c-white-soft);
 }
 
 /* 3. 添加灰色遮罩层 */

@@ -3,11 +3,16 @@ import {ElMessage} from  "element-plus";
 
 const defaultError = ()=> ElMessage.warning(AxiosError.name)
 const defaultFailure = () => ElMessage.warning("Something went wrong, please contact the administrator")
-function post(url: string, data: object,
+function post(url: string, data: Record<string, any>,
               success: (message: string, status: number) => void,
-              failure = defaultFailure,
+              failure: (message: string, status: number) => void = defaultFailure,
               err = defaultError) {
-    axios.post(url, data,{
+    // URL-encode the data so Spring can bind @RequestParam parameters
+    const params = new URLSearchParams();
+    for (const key in data) {
+        params.append(key, data[key]);
+    }
+    axios.post(url, params,{
         headers: { // config Request Header
             'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8', // the data will be sent looking like a traditional HTML form submission
         },
@@ -16,7 +21,7 @@ function post(url: string, data: object,
         if(data.success){
             success(data.message, data.status)
         } else{
-            failure()
+            failure(data.message, data.status)
         }
     }).catch(err)
 }
