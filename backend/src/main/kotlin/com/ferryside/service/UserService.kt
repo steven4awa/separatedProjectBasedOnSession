@@ -9,4 +9,5 @@ import com.ferryside.entity.Users
  */
 interface UserService : IService<Users> {
     fun findAccountByUsernameOrEmail(usernameOrEmail: String): Users?
+    fun updatePassword(email: String, password: String)
 }

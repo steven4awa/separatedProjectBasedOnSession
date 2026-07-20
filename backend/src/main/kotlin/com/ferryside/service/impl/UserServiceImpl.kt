@@ -1,6 +1,5 @@
 package com.ferryside.service.impl
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl
 import com.ferryside.entity.Users
 import com.ferryside.mapper.UsersMapper
@@ -19,5 +18,11 @@ class UserServiceImpl : UserService, ServiceImpl<UsersMapper, Users>(){
             .or()
             .eq("email", usernameOrEmail)
             .one()
+    }
+
+    override fun updatePassword(email: String, password: String) {
+        ktUpdate().eq(Users::email, email)
+            .set(Users::password, password)
+            .update()
     }
 }

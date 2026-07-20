@@ -1,10 +1,4 @@
 <script setup lang="ts">
-import WelcomeItem from './WelcomeItem.vue'
-import DocumentationIcon from './icons/IconDocumentation.vue'
-import ToolingIcon from './icons/IconTooling.vue'
-import EcosystemIcon from './icons/IconEcosystem.vue'
-import CommunityIcon from './icons/IconCommunity.vue'
-import SupportIcon from './icons/IconSupport.vue'
 import {House} from '@element-plus/icons-vue'
 import {Clock} from '@element-plus/icons-vue'
 import {post, get} from '@/net/index'
@@ -57,7 +51,7 @@ const login = () =>{
 
     <div style="display: flex; justify-content: space-between; ">
           <el-checkbox size="large" label="remember me" v-model="form.remember"></el-checkbox>
-          <el-link >Forgot the password?</el-link>
+          <el-link @click="router.push('/forget-password')">Forgot the password?</el-link>
     </div>
 
     <el-button style="width: 270px;margin: 30px auto 0;" type="success" plain @click="login()">Login</el-button>

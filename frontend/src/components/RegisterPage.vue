@@ -169,7 +169,7 @@ const sendValidatedEmail = () =>{
                 <el-icon><Clock /></el-icon>
               </template>
             </el-input>
-            <el-button style="padding: 5px" class="verify-btn" type="success" :disabled="!isEmailValid" @click="sendValidatedEmail()">
+            <el-button style="padding: 5px" class="verify-btn" type="success" :disabled="!isEmailValid" @click="sendValidatedEmail">
               {{ countdown > 0 ? `Resend in ${countdown}s` : 'Get the verification code' }}
             </el-button>
           </div>

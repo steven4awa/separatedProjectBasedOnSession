@@ -2,6 +2,7 @@ package com.ferryside.service.impl
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl
 import com.ferryside.entity.Users
+import com.ferryside.enums.EmailType
 import com.ferryside.mapper.UsersMapper
 import com.ferryside.service.AuthorizeService
 import com.ferryside.service.UserService
@@ -50,23 +51,23 @@ class AuthorizeServiceImpl(
         email: String,
         code: String
     ): String {
-        val msg = validateKeyInRedis(email, code)
-        if(msg == "开始注册"){
+        val msg = validateKeyInRedis(email, code, EmailType.REGISTER)
+        if(msg == "RIGHT-CODE"){
             save(Users(username = username, password = password, email = email))
             return msg
         }
         return msg
     }
 
-fun validateKeyInRedis(email: String, code: String): String {
-        val key = "email: ${session.id}: $email"
+private fun validateKeyInRedis(email: String, code: String, type: EmailType): String {
+        val key = getEmailKey(email, type)
         if(template.hasKey(key)){
             val codeValue = template.opsForValue().get(key) as String
             if(codeValue == ""){
                 return "验证码失效"
             }
             return if(codeValue == code){
-                "开始注册"
+                "RIGHT-CODE"
             } else{
                 "验证码错误"
             }
@@ -75,22 +76,46 @@ fun validateKeyInRedis(email: String, code: String): String {
         return "请先发送验证码到邮箱"
     }
 
-    override fun sendValidatedEmail(email: String): String {
-        /**
-         * 1. 生成验证码
-         * 2. 把邮箱和对应的验证码存入 Redis（过期时间3分钟）
-         * 3. 发送验证码到指定邮箱
-         * 4. 如果发送失败，把 Redis里面的刚刚插入的内容删除
-         * 5. 用户在注册时，再从 Redis里面取出对应键值对，查看是否一致
-         */
-        val key = "email: ${session.id}: $email"
+    override fun varifyOnly(
+        email: String,
+        code: String,
+    ): String {
+        val msg = validateKeyInRedis(
+            email,
+            code,
+            EmailType.RESET_PASSWORD
+        )
+
+        if (msg != "RIGHT-CODE")
+            return msg
+
+        return "true"
+    }
+
+
+    private fun getEmailKey(email: String, type: EmailType): String {
+        return "${type.name}:${session.id}:$email"
+    }
+
+    /**
+     * 1. 生成验证码
+     * 2. 把邮箱和对应的验证码存入 Redis（过期时间3分钟）
+     * 3. 发送验证码到指定邮箱
+     * 4. 如果发送失败，把 Redis里面的刚刚插入的内容删除
+     * 5. 用户在注册时，再从 Redis里面取出对应键值对，查看是否一致
+     */
+    override fun sendValidatedEmail(email: String, type: EmailType): String {
+        val key = getEmailKey(email, type)
         if(template.hasKey(key)){
             val expire = template.getExpire(key, TimeUnit.SECONDS)
             if(expire > 120)
-                return "false"
+                return "false" // 请求频繁
         }
-        if(userService.findAccountByUsernameOrEmail(email) != null){
+        if(type == EmailType.REGISTER && userService.findAccountByUsernameOrEmail(email) != null){
             return "该邮箱已被注册"
+        }
+        if(type == EmailType.RESET_PASSWORD &&userService.findAccountByUsernameOrEmail(email) == null){
+            return "该邮箱还未注册"
         }
 
         val randomCode = Random.nextInt(100000,1000000)
