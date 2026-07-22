@@ -21,5 +21,5 @@ export default defineConfig({
     },
   },
 
-  base: '/separatedProjectBasedOnSession/',
+  base: process.env.NODE_ENV === 'production' ? '/separatedProjectBasedOnSession/' : '/',
 })

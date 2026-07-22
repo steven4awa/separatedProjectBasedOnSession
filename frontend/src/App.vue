@@ -5,6 +5,7 @@ import {get} from "@/net/index.ts"
 import {ElMessage} from "element-plus";
 import {userStore} from "@/stores";
 import router from "@/router";
+import HeaderServerConfig from "@/components/HeaderServerConfig.vue";
 
 const store = userStore()
 if(store.auth.user === null){
@@ -22,10 +23,12 @@ if(store.auth.user === null){
   })
 }
 
+
+
 </script>
 
 <template>
-
+    <HeaderServerConfig></HeaderServerConfig>
     <header>
       <div class="wrapper">
         <HelloWorld msg="This is Main Page" />

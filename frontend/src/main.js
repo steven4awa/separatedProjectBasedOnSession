@@ -11,7 +11,8 @@ import router from './router'
 import axios from "axios";
 
 const app = createApp(App)
-axios.defaults.baseURL = 'http://localhost:8080'
+
+
 
 app.use(createPinia())
 app.use(router)
@@ -37,3 +38,4 @@ updateTheme()
 
 // 监听系统变化
 media.addEventListener('change', updateTheme)
+axios.defaults.baseURL = ``

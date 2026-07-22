@@ -1,0 +1,60 @@
+version: '3.9'
+
+services:
+  # 1. MySQL 服务
+  mysql:
+    image: mysql:8.0
+    container_name: backend-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: # Your password
+      MYSQL_DATABASE:  # 改为你的数据库名称
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # 2. Redis 服务
+  redis:
+    image: redis:alpine
+    container_name: backend-redis
+    restart: always
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # 3. Spring Boot 应用服务
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: backend-app
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      # 在 Docker 网络中，主机名直接用服务名 mysql 和 redis
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/study?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: # your password
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+
+volumes:
+  mysql-data:
+
+  

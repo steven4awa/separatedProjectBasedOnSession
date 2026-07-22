@@ -1,4 +1,4 @@
-import { reactive } from 'vue'
+import {reactive, Ref, ref} from 'vue'
 import { defineStore } from 'pinia'
 
 interface Account {
@@ -11,5 +11,6 @@ export const userStore = defineStore('store', () => {
   const auth = reactive<{user: Account | null| string}>({
     user: null
   })
-  return {auth}
+  const serverAddress = ref()
+  return {auth, serverAddress}
 })
