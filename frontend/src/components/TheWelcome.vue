@@ -5,13 +5,14 @@ import {post, get} from '@/net/index'
 import {reactive} from "vue";
 import {ElMessage} from "element-plus";
 import router from '@/router'
+import {userStore} from "@/stores";
 const openReadmeInEditor = () => fetch('/__open-in-editor?file=README.md')
 const form = reactive({
   username: '',
   password: '',
   remember: false,
 })
-
+const store = userStore()
 const login = () =>{
   if(form.username && form.username.length > 0){
     post('/api/auth/login', {
@@ -19,8 +20,11 @@ const login = () =>{
       password: form.password,
       remember: form.remember,
     }, (message)=>{
+      store.auth.user = message
       ElMessage.success(message)
       router.push('/index')
+    }, (message)=>{
+      ElMessage.warning(message)
     })
   } else{
     ElMessage.warning("Please enter username and password")
@@ -37,17 +41,23 @@ const login = () =>{
         Please input the username and password before entering the system
       </h3>
     </div>
+    <el-form>
+      <el-form-item>
+        <el-input type="text" placeholder="username/email" style="width: 50%;margin: 30px auto 0;" v-model="form.username">
+          <template #prefix>
+            <el-icon><House /></el-icon>
+          </template>
+        </el-input>
+      </el-form-item>
+     <el-form-item>
+       <el-input type="password" placeholder="password" style="width: 50%;margin: 30px auto 0;" v-model="form.password">
+         <template #prefix>
+           <el-icon><Clock /></el-icon>
+         </template>
+       </el-input>
+     </el-form-item>
+    </el-form>
 
-    <el-input type="text" placeholder="username/email" style="width: 50%;margin: 30px auto 0;" v-model="form.username">
-      <template #prefix>
-        <el-icon><House /></el-icon>
-      </template>
-    </el-input>
-    <el-input type="password" placeholder="password" style="width: 50%;margin: 30px auto 0;" v-model="form.password">
-      <template #prefix>
-        <el-icon><Clock /></el-icon>
-      </template>
-    </el-input>
 
     <div style="display: flex; justify-content: space-between; ">
           <el-checkbox size="large" label="remember me" v-model="form.remember"></el-checkbox>

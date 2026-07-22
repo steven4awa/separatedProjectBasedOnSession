@@ -1,7 +1,27 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
 import HelloWorld from './components/HelloWorld.vue'
-import router from "@/router/index.js";
+import {get} from "@/net/index.ts"
+import {ElMessage} from "element-plus";
+import {userStore} from "@/stores";
+import router from "@/router";
+
+const store = userStore()
+if(store.auth.user === null){
+  get("api/user/me", (message)=>{
+
+    // ElMessage.success(message)
+    store.auth.user = message;
+    console.log(store.auth.user)
+    router.push("/index")
+  }, ()=>{
+    store.auth.user = null
+    // ElMessage.warning(message)
+  }, (message)=>{
+    ElMessage.warning(message)
+  })
+}
+
 </script>
 
 <template>
@@ -42,13 +62,6 @@ nav {
   margin-top: 2rem;
 }
 
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
 
 nav a {
   display: inline-block;

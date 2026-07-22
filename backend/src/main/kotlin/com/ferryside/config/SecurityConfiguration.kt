@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.invoke
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import org.springframework.security.crypto.password.NoOpPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository
@@ -42,6 +43,7 @@ class SecurityConfiguration(
                 // 1. 优先配置：允许所有人访问登录接口
 //                authorize("/api/auth/login", permitAll) // `/api/auth/login` is accessible for everyone
                 authorize("/api/auth/**", permitAll)
+                authorize("/api/user/**", permitAll)
                 authorize(anyRequest, authenticated) // 除了 `/api/auth/login` 都需要认证
             }
 
@@ -81,9 +83,13 @@ class SecurityConfiguration(
     }
 
 
+//    @Bean
+//    fun passwordEncoder(): PasswordEncoder {
+//        return BCryptPasswordEncoder()
+//    }
     @Bean
     fun passwordEncoder(): PasswordEncoder {
-        return BCryptPasswordEncoder()
+        return NoOpPasswordEncoder.getInstance()
     }
 
 

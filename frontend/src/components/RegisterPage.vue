@@ -95,6 +95,7 @@ const registerForm = ()=>{
         email: form.email,
         code: form.code,
       }, ()=>{
+        ElMessage.success("User registered successfully.");
         router.push("/");
       })
     } else

@@ -8,7 +8,6 @@
 <style>
 @media (min-width: 1024px) {
   .about {
-    min-height: 100vh;
     display: flex;
     align-items: center;
   }
@@ -17,7 +16,10 @@
 
 <script setup>
 import router from '@/router'
+import {userStore} from "@/stores";
+const store = userStore()
 function logout(){
+  store.auth.user = null
   router.push('/')
 }
 </script>

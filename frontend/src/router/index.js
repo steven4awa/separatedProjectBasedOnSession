@@ -1,6 +1,6 @@
-import { createRouter, createWebHistory,createWebHashHistory  } from 'vue-router'
+import { createRouter, createWebHashHistory  } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import axios from "axios";
+import {userStore} from "@/stores";
 
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
@@ -31,22 +31,17 @@ const router = createRouter({
   ],
 })
 
-// router.beforeEach(async (to, from, next) => {
-//     // 不需要登录就能访问的页面白名单
-//     const publicPages = ['/']
-//     const authRequired = !publicPages.includes(to.path)
-//
-//     if (authRequired) {
-//         // 调用后端接口检查登录状态
-//         try {
-//             await axios.get('/api/auth/status', { withCredentials: true })
-//             next()  // 已登录，放行
-//         } catch {
-//             next('/')  // 未登录，跳转登录页
-//         }
-//     } else {
-//         next()
-//     }
-// })
+router.beforeEach(async (to) => {
+  const store = userStore()
+
+  // 已登录，禁止访问登录页
+  if (store.auth.user && to.path === "/") {
+    return "/index"
+  }
+  // 未登录，禁止访问后台
+  if (!store.auth.user && to.path.startsWith("/index")) {
+    return "/"
+  }
+})
 
 export default router

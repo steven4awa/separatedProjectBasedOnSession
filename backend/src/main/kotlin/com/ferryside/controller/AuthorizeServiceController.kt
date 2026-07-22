@@ -50,7 +50,7 @@ class AuthorizeServiceController (
                  @RequestParam("code")@Length(min = 6, max = 6) code: String,
                  ): RestBean<String>{
         val msg = service.validateAndRegister(username, password, email, code)
-        return if(msg == "注册成功"){
+        return if(msg == "RIGHT-CODE"){
             RestBean.success(msg)
         } else{
             RestBean.failure(HttpStatus.BAD_REQUEST.ordinal, msg)
